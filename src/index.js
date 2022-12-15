@@ -8,6 +8,9 @@ import { cat } from "./cat.js";
 import { add } from "./add.js";
 import { rn } from "./rn.js";
 import { mv } from "./mv.js";
+import { rm } from "./rm.js";
+import { inf } from './os/os.js'
+import {hash} from './hash/hash.js'
 import * as readlinePromises from "node:readline/promises";
 import { argv, chdir, cwd, stdin, stdout } from "node:process";
 
@@ -48,7 +51,11 @@ const myline = async () => {
       data2
         ? (homedir = cd(homedir, data2))
         : stdout.write("\n" + `Please, print commands > `);
-    }
+	 }
+	 if (data1 === "rm") {
+      if (data2) await rm(homedir, data2);
+      else stdout.write("\n" + `You didn't specify a file` + "\n");
+	 }
     if (data1 === "cat") {
       if (data2) await cat(homedir, data2);
       else stdout.write("\n" + `You didn't specify a file` + "\n");
@@ -68,7 +75,14 @@ const myline = async () => {
 	 if (data1 === "mv") {
       if (data2 &&data3) await mv(homedir, data2, data3);
       else stdout.write("\n" + `You didn't enter a file name` + "\n");
-    }
+	 }
+	 if (data1 === "hash") {
+      if (data2 ) await hash(homedir, data2);
+      else stdout.write("\n" + `You didn't enter a file name` + "\n");
+	 }
+	 if (data1 === "os") {
+      if (data2) inf(data2)
+	 }
     stdout.write(`You are currently in ${homedir}`);
     stdout.write("\n" + `Please, print commands > `);
   });
