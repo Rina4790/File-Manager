@@ -1,15 +1,18 @@
 import { chdir, cwd } from "node:process";
-import * as path from "node:path";
 import * as fs from "node:fs";
+import { err, pathResolve } from "./config.js";
 
 export const add = async (currentDir, fileName) => {
   try {
     chdir(currentDir);
-    if (!path.isAbsolute(fileName)) fileName = path.resolve(cwd(), fileName);
-    fs.open(fileName, "a", (err) => {
-      if (err) console.log(err);
+    const newPath = pathResolve(fileName)
+    return new Promise((resolve, reject) => {
+      fs.open(newPath, "a", (error) => {
+        if (error) resolve(err());
+        else resolve(console.log("The file was created!"));
+      });
     });
-  } catch (err) {
-    console.log(err);
+  } catch {
+    err();
   }
 };

@@ -1,5 +1,5 @@
 import * as os from "node:os";
-
+import { err } from "../config.js";
 export const inf = (arg) => {
   if (arg === "--EOL") {
     console.log(JSON.stringify(os.EOL));
@@ -28,8 +28,6 @@ export const inf = (arg) => {
     console.log("CPU architecture: ", os.arch());
     return;
   } else {
-    console.log(
-      "Please, print commands: --EOL, --cpus, --homedir, --username, --architecture"
-    );
+    err()
   }
 };

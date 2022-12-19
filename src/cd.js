@@ -1,21 +1,18 @@
 import { chdir, cwd } from "node:process";
-import * as path from "node:path";
+import { err, pathResolve } from "./config.js";
 
 export const cd = (homedir, newdir) => {
   let currentDir = chdir(homedir);
-  if (!path.isAbsolute(newdir)) newdir = path.resolve(cwd(), newdir);
+  const newdir_res = pathResolve(newdir);
 
   try {
-    chdir(newdir);
+    chdir(newdir_res);
     currentDir = cwd();
-  } catch (err) {
+  } catch {
     chdir(homedir);
     currentDir = cwd();
-    console.error(`This path does not exist. ${err}`);
+    err();
   } finally {
     return currentDir;
   }
 };
-
-
-

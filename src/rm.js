@@ -1,26 +1,20 @@
-import { join, isAbsolute } from "path";
 import * as fs from "node:fs";
-import { chdir, cwd } from "node:process";
+import { chdir } from "node:process";
+import { err, pathResolve } from "./config.js";
 
 export const rm = async (homedir, path_to_file) => {
   try {
     return new Promise((resolve, reject) => {
       chdir(homedir);
+      const path_to_fileRes = pathResolve(path_to_file);
 
-      const getPath = (path) => (isAbsolute(path) ? path : join(cwd(), path));
-      path_to_file = getPath(path_to_file);
-
-      fs.unlink(path_to_file, (err) => {
-        if (err) {
-          console.log("The file was not deleted!", err);
-          resolve();
-        } else {
-          console.log("File was deleted!");
-          resolve();
-        }
+      fs.unlink(path_to_fileRes, (error) => {
+        if (error) {
+          resolve(err());
+        } else resolve(console.log("File was deleted!"));
       });
     });
-  } catch (error) {
-    console.log(error);
+  } catch {
+    err();
   }
 };

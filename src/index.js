@@ -2,25 +2,25 @@ import { parseName } from "./hello.js";
 import os from "os";
 import { up } from "./up.js";
 import { cd } from "./cd.js";
-import { cp } from "./cp.js"
+import { cp } from "./cp.js";
 import { ls } from "./ls.js";
 import { cat } from "./cat.js";
 import { add } from "./add.js";
 import { rn } from "./rn.js";
 import { mv } from "./mv.js";
 import { rm } from "./rm.js";
-import { inf } from './os/os.js'
-import {hash} from './hash/hash.js'
+import { inf } from "./os/os.js";
+import { hash } from "./hash/hash.js";
+import { compress } from "./zlib/compress.js";
+import { decompress } from "./zlib/decompress.js";
 import * as readlinePromises from "node:readline/promises";
-import { argv, chdir, cwd, stdin, stdout } from "node:process";
+import { ii, currentlyDir, printCommand, hello, bye } from "./config.js";
 
 let homedir = os.homedir();
 const name = parseName();
-const result = `Welcome to the File Manager, ${name}!`;
-const bye = `Thank you for using File Manager, ${name}!`;
-console.log(result);
 
-console.log(`You are currently in ${homedir}`);
+hello(name);
+currentlyDir(homedir);
 
 const rl = readlinePromises.createInterface({
   input: process.stdin,
@@ -28,7 +28,7 @@ const rl = readlinePromises.createInterface({
 });
 
 const myline = async () => {
-  stdout.write(`Please, print commands > `);
+  printCommand();
   rl.on("line", async (line) => {
     const data = line.toString().trim().replace(/ {1,}/g, " ").split(" ");
     let data2;
@@ -38,56 +38,73 @@ const myline = async () => {
       data2 = data[1];
     }
     const data1 = data[0].toLowerCase();
-
     const data3 = data[2];
+    switch (data1) {
+      case "up":
+        homedir = up(homedir);
+        break;
 
-    if (data1 === "up") {
-      homedir = up(homedir);
+      case "ls":
+        await ls(homedir);
+        break;
+
+      case "cd":
+        data2 ? (homedir = cd(homedir, data2)) : ii();
+        break;
+
+      case "rm":
+        data2 ? await rm(homedir, data2) : ii();
+        break;
+
+      case "cat":
+        data2 ? await cat(homedir, data2) : ii();
+        break;
+
+      case "add":
+        data2 ? await add(homedir, data2) : ii();
+        break;
+
+      case "rn":
+        data2 && data3 ? await rn(homedir, data2, data3) : ii();
+        break;
+
+      case "cp":
+        data2 && data3 ? await cp(homedir, data2, data3) : ii();
+        break;
+
+      case "mv":
+        data2 && data3 ? await mv(homedir, data2, data3) : ii();
+        break;
+
+      case "hash":
+        data2 ? await hash(homedir, data2) : ii();
+        break;
+
+      case "os":
+        data2 ? inf(data2) : ii();
+        break;
+
+      case "compress":
+        data2 && data3 ? await compress(homedir, data2, data3) : ii();
+        break;
+
+      case "decompress":
+        data2 && data3 ? await decompress(homedir, data2, data3) : ii();
+        break;
+
+      case ".exit":
+        bye(name);
+        process.exit(0);
+
+      default:
+        console.log(inputInvalid());
     }
-    if (data1 === "ls") {
-      await ls(homedir);
-    }
-    if (data1 === "cd") {
-      data2
-        ? (homedir = cd(homedir, data2))
-        : stdout.write("\n" + `Please, print commands > `);
-	 }
-	 if (data1 === "rm") {
-      if (data2) await rm(homedir, data2);
-      else stdout.write("\n" + `You didn't specify a file` + "\n");
-	 }
-    if (data1 === "cat") {
-      if (data2) await cat(homedir, data2);
-      else stdout.write("\n" + `You didn't specify a file` + "\n");
-	 }
-	 if (data1 === "add") {
-      if (data2) await add(homedir, data2);
-      else stdout.write("\n" + `You didn't enter a file name` + "\n");
-	 }
-	 if (data1 === "rn") {
-      if (data2 &&data3) await rn(homedir, data2, data3);
-      else stdout.write("\n" + `You didn't enter a file name` + "\n");
-	 }
-	 if (data1 === "cp") {
-      if (data2 &&data3) await cp(homedir, data2, data3);
-      else stdout.write("\n" + `You didn't enter a file name` + "\n");
-	 }
-	 if (data1 === "mv") {
-      if (data2 &&data3) await mv(homedir, data2, data3);
-      else stdout.write("\n" + `You didn't enter a file name` + "\n");
-	 }
-	 if (data1 === "hash") {
-      if (data2 ) await hash(homedir, data2);
-      else stdout.write("\n" + `You didn't enter a file name` + "\n");
-	 }
-	 if (data1 === "os") {
-      if (data2) inf(data2)
-	 }
-    stdout.write(`You are currently in ${homedir}`);
-    stdout.write("\n" + `Please, print commands > `);
+
+    currentlyDir(homedir);
+    printCommand();
   });
   rl.on("close", () => {
-    console.log("\n" + bye);
+    bye(name);
     process.exit(0);
   });
 };
