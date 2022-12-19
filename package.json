@@ -1,0 +1,21 @@
+{
+  "name": "file_manager",
+  "version": "1.0.0",
+  "description": "NodeJs task",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+	 "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rina4790/File-Manager.git"
+  },
+  "author": "rina4790",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rina4790/File-Manager/issues"
+  },
+  "homepage": "https://github.com/Rina4790/File-Manager#readme"
+}
